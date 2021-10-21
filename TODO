@@ -1,0 +1,13 @@
+Dobra, trzeba ogarnąć losowe wrzucanie owocków                       - zrobione
+System sterowania (oddzielny wątek wychwytujący kliki i jakiś lock?) - zrobione
+System kolizji -> Dotknięcie ściany (przejście na drugą stronę?),    - zrobione
+            dotykanie owocków oraz dotykanie samego siebie przez węża 
+                - zrobione :sunglasses:
+                No jednak nie do końca, jeśli wąż ma długość 2
+                i wybierze się kierunek przeciwny do obecnego
+                to udaje, że kolizji nie było
+
+Jakieś punkty by się może przydały?
+
+opcjonalne:
+    bezpośredni dostęp do konsoli (wkaźniki? windowsowe biblioteki?)
