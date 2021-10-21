@@ -10,19 +10,24 @@ namespace tak
             private List<cell> snake = new List<cell>();
             private bool addCell = false;
 
-            public Snake()
+            public Snake(int X, int Y)
             {
-                snake.Add(new cell { position = (5, 10) });
+                snake.Add(new cell { position = (X, Y) });
             }
 
-            public void AddCell((int X, int Y) position)
+            public Snake()
             {
-                snake.Add(new cell { position = position });
+                snake.Add(new cell { position = (1, 1) });
             }
 
             public void AddCell()
             {
                 addCell = true;
+            }
+
+            private void AddCell((int X, int Y) position)
+            {
+                snake.Add(new cell { position = position });
             }
 
             public IEnumerable<(int X, int Y)> GetCellsPositions()
@@ -51,12 +56,12 @@ namespace tak
                         temp = (0, 1);
                         break;
                     default:
-                        Console.WriteLine("bruh");
-                        Environment.Exit(1);
-                        break;
+                        throw new Exception("How is that even possible?");
                 }
 
                 var newPos = (snake[0].position.X + temp.X, snake[0].position.Y + temp.Y);
+
+                #region Move snake to opposite side of map
 
                 if (newPos.Item1 < 0)
                     newPos.Item1 = areaSize.X - 1;
@@ -70,12 +75,12 @@ namespace tak
                 if (newPos.Item2 >= areaSize.Y)
                     newPos.Item2 = 0;
 
+                #endregion
+
                 snake.Insert(0, new cell { position = newPos });
 
                 if (!addCell)
-                {
                     snake.RemoveAt(snake.Count - 1);
-                }
 
                 addCell = false;
             }

@@ -16,10 +16,10 @@ namespace tak
         // 0 - Pusta przestrzeń
         // 1 - Wonsz
         // 2 - Jagódka? Karma dla węża?
-        private int[,] gameArea;
 
-        // W couple można nazywać poszczególne elementy, co mega ułatwia pracę
+        private int[,] gameArea = new int[areaSize.X, areaSize.Y];
         private static (int X, int Y) areaSize = (10, 20);
+        private int points = 0;
 
         private Snake snake = new Snake();
         private bool isFruitPresent = false;
@@ -27,11 +27,7 @@ namespace tak
         private Direction direction = Direction.Up;
         private static Mutex directionMutex = new Mutex();
 
-        // Reminder dla mnie w przyszłości. Jedna sekunda jest tutaj dzielona na ilość
-        // klatek jakie chcemy otrzymać. 1000 ms dzielone na 2 klatki daje nam
-        // frametime na poziomie 500 ms.
         private int tickrate = 1000 / 3;
-
         private Thread movement;
         private Random rnd = new Random();
 
@@ -39,39 +35,36 @@ namespace tak
         {
             isGameOver = false;
 
-            gameArea = new int[areaSize.X, areaSize.Y];
-
             movement = new Thread(MovementThread);
             movement.Start();
         }
 
-        // TODO: Dobra, trzeba ogarnąć losowe wrzucanie owocków                       - done
-        //       System sterowania (oddzielny wątek wychwytujący kliki i jakiś lock?) - done
-        //       System kolizji -> Dotknięcie ściany (przejście na drugą stronę?),    - done
-        //                  dotykanie owocków oraz dotykanie samego siebie przez węża - partially done
-        //       Jakieś punkty by się może przydały?
-
         public void Update()
         {
             directionMutex.WaitOne();
-
             snake.UpdateSnake(direction);
-
             directionMutex.ReleaseMutex();
 
-            if (snake.GetCellsPositions().First() == fruitLocation)
+            var snakeCellsPositions = snake.GetCellsPositions();
+
+            if (snakeCellsPositions.Count() != snakeCellsPositions.Distinct().Count())
             {
+                isGameOver = true;
+                return;
+            }
+
+            if (snakeCellsPositions.First() == fruitLocation)
+            {
+                points++;
                 snake.AddCell();
                 isFruitPresent = false;
             }
 
-            // zero whole array
             for (int i = 0; i < areaSize.X; i++)
                 for (int j = 0; j < areaSize.Y; j++)
                     gameArea[i, j] = 0;
 
-            // change certain fields to make a snake
-            foreach (var item in snake.GetCellsPositions())
+            foreach (var item in snakeCellsPositions)
             {
                 gameArea[item.X, item.Y] = 1;
             }
@@ -96,12 +89,13 @@ namespace tak
             }
             else
                 gameArea[fruitLocation.X, fruitLocation.Y] = 2;
-
-            Thread.Sleep(tickrate);
         }
 
         public void Render()
         {
+            if (isGameOver)
+                return;
+
             Console.Clear();
 
             char[] line = new char[areaSize.Y];
@@ -122,15 +116,17 @@ namespace tak
                             line[j] = 'O';
                             break;
                         default:
-                            Console.WriteLine("bruh");
-                            System.Environment.Exit(1);
-                            break;
+                            throw new Exception("Wrong value in the gameArea array");
                     }
                 }
                 Console.WriteLine(line);
 
                 line = new char[areaSize.Y];
             }
+
+            Console.WriteLine($"\nYour points: {points}");
+
+            Thread.Sleep(tickrate);
         }
 
         private void MovementThread()

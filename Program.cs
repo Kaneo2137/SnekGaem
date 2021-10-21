@@ -12,6 +12,8 @@ namespace tak
                 game.Update();
                 game.Render();
             }
+
+            Console.WriteLine("\nNo to ten, koniec zabawy panie Ferdku");
         }
 
     }
