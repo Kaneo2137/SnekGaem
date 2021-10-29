@@ -7,15 +7,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 
-namespace tak
+namespace SnekGaem
 {
     public partial class Game
     {
         public bool isGameOver { get; private set; }
 
-        // 0 - Pusta przestrzeń
-        // 1 - Wonsz
-        // 2 - Jagódka? Karma dla węża?
+        // 0 - Clear field
+        // 1 - Snake
+        // 2 - Snake's favourite food
 
         private int[,] gameArea = new int[areaSize.X, areaSize.Y];
         private static (int X, int Y) areaSize = (10, 20);
@@ -28,8 +28,9 @@ namespace tak
         private static Mutex directionMutex = new Mutex();
 
         private int tickrate = 1000 / 3;
-        private Thread movement;
         private Random rnd = new Random();
+
+        private Thread movement;
 
         public Game()
         {

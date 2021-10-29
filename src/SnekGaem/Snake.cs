@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace tak
+namespace SnekGaem
 {
     public partial class Game
     {
@@ -15,9 +15,10 @@ namespace tak
                 snake.Add(new cell { position = (X, Y) });
             }
 
+
             public Snake()
             {
-                snake.Add(new cell { position = (1, 1) });
+                snake.Add(new cell { position = (5, 10) });
             }
 
             public void AddCell()
